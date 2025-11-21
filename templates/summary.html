@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Summary</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+
+  <div class="flex min-h-screen flex-col bg-[#221e22] text-white gap-9">
+    <main class="flex flex-grow flex-col items-center justify-center gap-9">
+      <h1 class="text-6xl text-[#c4a0f9] drop-shadow-[4px_4px_0px_black] py-9 mt-9">Attendance Summary</h1>
+      <div class="rounded-xl bg-[#2a272b] p-10 hover:bg-[#302d31] drop-shadow-[6px_6px_0px_black] mt-1">
+        <h2 class="text-2xl text-[#c4a0f9] text-center">Summary</h2>
+        <table>
+          <thead>
+            <tr class="text-[#ee5622] border-b border-gray-700 ">
+              <th class="py-2 px-5">No.</th>
+              <th class="py-2 px-5">Code</th>
+              <th class="py-2 px-5">Subject</th>
+              <th class="py-2 px-5">Avg Attendance</th>
+              <th class="py-2 px-5">Total Classes</th>
+              <th class="py-2 px-5">Attended</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in result[0] %}
+            <tr>
+              <td class="py-2 px-5">{{item.no}}</td>
+              <td class="py-2 px-5">{{item.code}}</td>
+              <td class="py-2 px-5">{{item.name}}</td>
+              <td class="py-2 px-5">{{item.percentage}}</td>
+              <td class="py-2 px-5">{{item.classes}}</td>
+              <td class="py-2 px-5">{{item.present}}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div class="rounded-xl bg-[#422528] p-10 hover:bg-[#512e31] drop-shadow-[6px_6px_0px_black] m-2">
+        <h2 class="text-xl text-[#c4a0f9] text-center">Absent Periods</h2>
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-gray-700 text-gray-300">
+              <th class="py-2 px-5">No.</th>
+              <th class="py-2 px-5">Course</th>
+              <th class="py-2 px-5">Date</th>
+              <th class="py-2 px-5">Day</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% if result[1] %}
+
+            {% for item in result[1] %}
+            <tr>
+              <td class="py-2 px-5">{{ loop.index }}</td>
+              <td class="py-2 px-5">{{ item.course }}</td>
+              <td class="py-2 px-5">{{ item.date }}</td>
+              <td class="py-2 px-5">{{ item.day }}</td>
+            </tr>
+            {% endfor %}
+
+            {% else %}
+
+            <tr>
+              <td colspan="4" class="py-4 px-5 text-center text-emerald-500 text-l ">
+                <i>
+                  No classes missed this week!
+                </i>
+              </td>
+            </tr>
+
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+      <div class="flex flex-row rounded-xl bg-[#2a272b] m-2 hover:bg-[#302d31] drop-shadow-[6px_6px_0px_black] text-xl">
+
+        {% if result[2] > 75 %}
+        <p class="p-10 text-emerald-500"><strong>Total Average (75% Target):</strong> {{ result[2] }}%</p>
+        {% else %}
+        <p class="p-10 text-red-500"><strong>Total Average (75% Target):</strong> {{ result[2] }}%</p>
+        {% endif %}
+
+        {% if result[4] > 0 %}
+        <p class="p-10 text-emerald-500"><strong>Can Miss (75%):</strong> {{ result[4] }}</p>
+        {% else %}
+        <p class="p-10 text-red-500"><strong>Can Miss (75%):</strong> {{ result[4] }}</p>
+        {% endif %}
+
+        {% if result[6] > 0 %}
+        <p class="p-10 text-red-500"><strong>Need to Attend (75%):</strong> {{ result[6] }}</p>
+        {% else %}
+        <p class="p-10 text-emerald-500"><strong>Need to Attend (75%):</strong> {{ result[6] }}</p>
+        {% endif %}
+
+      </div>
+
+      <div class="flex flex-row rounded-xl bg-[#2a272b] m-2 hover:bg-[#302d31] drop-shadow-[6px_6px_0px_black] text-xl">
+        {% if result[2] > 85 %}
+        <p class="p-10 text-emerald-500"><strong>Total Average(85% Targer):</strong> {{ result[2] }}%</p>
+        {% else %}
+        <p class="p-10 text-red-500"><strong>Total Average(85% Targer):</strong> {{ result[2] }}%</p>
+        {% endif %}
+
+        {% if result[3] > 0 %}
+        <p class="p-10 text-emerald-500"><strong>Can Miss(85%):</strong> {{ result[3] }}</p>
+        {% else %}
+        <p class="p-10 text-red-500"><strong>Can Miss(85%):</strong> {{ result[3] }}</p>
+        {% endif %}
+
+        {% if result[5] > 0 %}
+        <p class="p-10 text-red-500"><strong>Need to Attend(85%):</strong> {{ result[5] }}</p>
+        {% else %}
+        <p class="p-10 text-emerald-500"><strong>Need to Attend(85%):</strong> {{ result[5] }}</p>
+        {% endif %}
+      </div>
+
+    </main>
+
+    <footer class="py-4 text-center text-xl text-gray-300">made by <a href="https://github.com/sr1k7nth"
+        class="text-[#ee5622] hover:text-[#f77a4f]">sr1k7nth</a></footer>
+  </div>
+
+
+</body>
+
+</html>

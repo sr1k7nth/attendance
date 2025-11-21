@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex flex-col min-h-screen bg-[#221e22] text-white">
+
+  <main class="flex flex-col items-center justify-center flex-grow">
+    <h2 class="mb-14 text-6xl font-mono text-[#c4a0f9] drop-shadow-[4px_4px_0px_black]">Enter Credentials</h2>
+
+    <div class="w-[32rem] rounded-lg bg-[#31263e] p-8 drop-shadow-[8px_8px_0px_black]">
+      <form method="POST" action="/login" class="space-y-4">
+        <div class="flex flex-col">
+          <label for="uid" class="font-mono text-[#eca72c] text-2xl">User ID:</label>
+          <input type="text" id="uid" name="uid" required
+            class="rounded border border-emerald-500 bg-slate-800 px-2 py-1 text-white text-xl" />
+        </div>
+
+        <div class="flex flex-col">
+          <label for="pass" class="font-mono text-[#eca72c] text-2xl">Password:</label>
+          <input type="password" id="pass" name="pass" required
+            class="rounded border border-emerald-500 bg-slate-800 px-2 py-1 text-white text-xl" />
+        </div>
+
+        <button type="submit"
+          class="mt-2 w-full rounded bg-emerald-600 py-2 text-black hover:bg-emerald-800 hover:text-white hover:drop-shadow-[6px_6px_0px_black]">
+          Submit
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <div id="loadingOverlay"
+    class="hidden fixed inset-0 bg-black bg-opacity-60 text-white text-2xl flex items-center justify-center">
+    Loading... Please wait.
+  </div>
+
+
+  <footer class="text-xl py-4 text-center text-gray-300">
+    made by <a href="https://github.com/sr1k7nth" class="text-[#ee5622] hover:text-[#f77a4f]">sr1k7nth</a>
+  </footer>
+  <script>
+    document.querySelector("form").addEventListener("submit", function () {
+      document.getElementById("loadingOverlay").classList.remove("hidden");
+    });
+  </script>
+</body>
+
+
+</html>
