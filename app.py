@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from scrapper import scrape_attendance
 import requests
 
-APP_VERSION = "1.1.2"
+APP_VERSION = "1.2.0"
 GITHUB_API = "https://api.github.com/repos/sr1k7nth/attendance/releases/latest"
 
 def version_tuple(v):
