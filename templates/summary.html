@@ -210,7 +210,6 @@
         return;
       }
 
-      // CASE 1 desired % > current
       if (target > totalAvg) {
         const need = Math.ceil(
           ((target / 100 * totalClasses) - totalPresent) / (1 - target / 100)
@@ -223,7 +222,6 @@
         return;
       }
 
-      // CASE 2 desired % < current
       if (target < totalAvg) {
         const canMiss = Math.floor(
           (totalPresent - (target / 100 * totalClasses)) / (target / 100)
@@ -236,7 +234,6 @@
         return;
       }
 
-      // CASE 3 equal
       resultBox.innerHTML = `
       <p class="text-blue-400">You're already at ${target}%.</p>`;
     }
