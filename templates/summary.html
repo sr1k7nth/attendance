@@ -168,25 +168,25 @@
         {% endif %}
       </div>
 
-      <div
-        class="rounded-xl bg-[#2a272b] p-8 mt-4 w-[32rem] text-center drop-shadow-[6px_6px_0px_black] hover:bg-[#302d31]">
-        <h2 class="text-2xl text-[#c4a0f9] mb-4">Custom Attendance Calculator</h2>
+      <form onsubmit="event.preventDefault(); calculateCustom();">
+        <div
+          class="rounded-xl bg-[#2a272b] p-8 mt-4 w-[32rem] text-center drop-shadow-[6px_6px_0px_black] hover:bg-[#302d31]">
+          <h2 class="text-2xl text-[#c4a0f9] mb-4">Custom Attendance Calculator</h2>
 
-        <label class="text-lg">Enter Target Percentage:</label>
-        <input id="targetInput" type="number" min="1" max="100"
-          class="mt-2 w-full px-3 py-2 rounded bg-slate-800 border border-emerald-500 text-white"
-          placeholder="e.g. 80" />
+          <label class="text-lg">Enter Target Percentage:</label>
+          <input id="targetInput" type="number" min="1" max="100"
+            class="mt-2 w-full px-3 py-2 rounded bg-slate-800 border border-emerald-500 text-white"
+            placeholder="e.g. 80" />
 
-        <button onclick="calculateCustom()"
-          class="mt-4 w-full rounded bg-emerald-600 py-2 text-black hover:bg-emerald-800 hover:text-white">
-          Calculate
-        </button>
+          <button type="button" onclick="calculateCustom()"
+            class="mt-4 w-full rounded bg-emerald-600 py-2 text-black hover:bg-emerald-800 hover:text-white">
+            Calculate
+          </button>
 
-        <div id="customResult" class="mt-4 text-xl"></div>
+          <div id="customResult" class="mt-4 text-xl"></div>
+        </div>
+      </form>
 
-
-
-      </div>
 
     </main>
 
@@ -237,6 +237,13 @@
       resultBox.innerHTML = `
       <p class="text-blue-400">You're already at ${target}%.</p>`;
     }
+
+    document.getElementById("targetInput").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        calculateCustom();
+      }
+    });
   </script>
 </body>
 
