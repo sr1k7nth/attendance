@@ -12,6 +12,12 @@
     <main class="flex flex-grow flex-col items-center justify-center gap-9">
       <h1 class="text-6xl text-[#c4a0f9] drop-shadow-[4px_4px_0px_black] py-9 mt-9">Attendance Summary</h1>
       <div class="rounded-xl bg-[#2a272b] p-10 hover:bg-[#302d31] drop-shadow-[6px_6px_0px_black] mt-1">
+        {% if update.update_available %}
+        <div class=" rounded-lg bg-yellow-500 text-black p-4 mb-6 text-center font-semibold shadow-lg">
+          🚀 A new version (v{{ update.latest_version }}) is available!
+          <a href="{{ update.url }}" class="underline font-bold ml-2">Download update</a>
+        </div>
+        {% endif %}
         <h2 class="text-2xl text-[#c4a0f9] text-center">Summary</h2>
         <table>
           <thead>
@@ -39,7 +45,7 @@
         </table>
       </div>
       <div class="rounded-xl bg-[#422528] p-10 hover:bg-[#512e31] drop-shadow-[6px_6px_0px_black] m-2">
-        <h2 class="text-xl text-[#c4a0f9] text-center">Absent Periods</h2>
+        <h2 class="text-2xl text-[#c4a0f9] text-center">Absent Periods</h2>
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-gray-700 text-gray-300">
@@ -117,13 +123,79 @@
         {% endif %}
       </div>
 
+      <div
+        class="rounded-xl bg-[#2a272b] p-8 mt-4 w-[32rem] text-center drop-shadow-[6px_6px_0px_black] hover:bg-[#302d31]">
+        <h2 class="text-2xl text-[#c4a0f9] mb-4">Custom Attendance Calculator</h2>
+
+        <label class="text-lg">Enter Target Percentage:</label>
+        <input id="targetInput" type="number" min="1" max="100"
+          class="mt-2 w-full px-3 py-2 rounded bg-slate-800 border border-emerald-500 text-white"
+          placeholder="e.g. 80" />
+
+        <button onclick="calculateCustom()"
+          class="mt-4 w-full rounded bg-emerald-600 py-2 text-black hover:bg-emerald-800 hover:text-white">
+          Calculate
+        </button>
+
+        <div id="customResult" class="mt-4 text-xl"></div>
+
+        
+
+      </div>
+
     </main>
 
     <footer class="py-4 text-center text-xl text-gray-300">made by <a href="https://github.com/sr1k7nth"
         class="text-[#ee5622] hover:text-[#f77a4f]">sr1k7nth</a></footer>
   </div>
 
+  <script>
+    const totalAvg = {{ result[2] | tojson }};
+    const summaryData = {{ result[0] | tojson }};
 
+    const totalPresent = summaryData.reduce((sum, item) => sum + parseInt(item.present), 0);
+    const totalClasses = summaryData.reduce((sum, item) => sum + parseInt(item.classes), 0);
+
+    function calculateCustom() {
+      const target = parseFloat(document.getElementById("targetInput").value);
+      const resultBox = document.getElementById("customResult");
+
+      if (!target || target <= 0 || target > 100) {
+        resultBox.innerHTML = "<p class='text-red-500'>Enter a valid percentage (1–100)</p>";
+        return;
+      }
+
+      // CASE 1 desired % > current
+      if (target > totalAvg) {
+        const need = Math.ceil(
+          ((target / 100 * totalClasses) - totalPresent) / (1 - target / 100)
+        );
+
+        resultBox.innerHTML = `
+        <p class="text-emerald-400">
+          📘 You must attend <b>${need}</b> more classes to reach <b>${target}%</b>.
+        </p>`;
+        return;
+      }
+
+      // CASE 2 desired % < current
+      if (target < totalAvg) {
+        const canMiss = Math.floor(
+          (totalPresent - (target / 100 * totalClasses)) / (target / 100)
+        );
+
+        resultBox.innerHTML = `
+        <p class="text-yellow-400">
+          🍀 You can miss <b>${canMiss}</b> classes and still maintain <b>${target}%</b>.
+        </p>`;
+        return;
+      }
+
+      // CASE 3 equal
+      resultBox.innerHTML = `
+      <p class="text-blue-400">You're already at ${target}%.</p>`;
+    }
+  </script>
 </body>
 
 </html>

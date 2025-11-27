@@ -38,12 +38,14 @@ def find_chrome():
 
     return None
 
+
+
 def scrape_attendance(uid, password):
 
     chrome_path = find_chrome()
     if not chrome_path:
         raise Exception("Google Chrome NOT found on this system!")
-    
+
     with sync_playwright() as pw:
 
         user_data_dir = os.path.join(os.getcwd(), "playwright_profile")
@@ -56,29 +58,38 @@ def scrape_attendance(uid, password):
 
         page = browser.new_page()
         url = "https://jssateb.azurewebsites.net/Apps/Login.aspx"
-        page.goto(url)
 
-        page.wait_for_selector("#optLoginAsStudent", timeout=10000)
+        page.goto(url, wait_until="domcontentloaded")
+
+        page.wait_for_selector("#optLoginAsStudent", timeout=15000)
         page.check("#optLoginAsStudent")
         page.fill("#txtUserID", uid)
         page.fill("#txtPassword", password)
-        page.click("#myBtn")
-        page.wait_for_timeout(1000)
 
-        error_node = page.query_selector("#divModelValidation_alertmsg")
-        if error_node:
-            msg = error_node.inner_text().strip().lower()
-            if "incorrect user id" in msg or "password" in msg:
-                browser.close()
-                return None
+        try:
+            with page.expect_navigation(wait_until="networkidle", timeout=15000):
+                page.click("#myBtn")
+        except:
+            pass
+
+        try:
+            error_node = page.query_selector("#divModelValidation_alertmsg")
+            if error_node:
+                msg = error_node.inner_text().strip().lower()
+                if "incorrect user id" in msg or "password" in msg:
+                    browser.close()
+                    return None
+        except:
+            pass
 
         page.wait_for_load_state("networkidle")
 
         page.wait_for_selector('a[href*="StudentAttendance"]', timeout=15000)
-        page.click('a[href*="StudentAttendance"]')
-        page.wait_for_selector('table.table', timeout=10000)
+        with page.expect_navigation(wait_until="networkidle", timeout=15000):
+            page.click('a[href*="StudentAttendance"]')
 
-        time.sleep(2)
+        page.wait_for_selector('table.table', timeout=15000)
+        time.sleep(1)
 
         soup = BeautifulSoup(page.content(), "lxml")
         table = soup.find("table", {"class": "table"})
@@ -103,7 +114,7 @@ def scrape_attendance(uid, password):
                             continue
 
                         info_list = [div.get_text(strip=True) for div in info_divs]
-                        if any("absent" in text.lower() for text in info_list):
+                        if any("absent" in x.lower() for x in info_list):
                             absent_periods.append({
                                 "day": day_name,
                                 "date": day_date,
@@ -111,8 +122,11 @@ def scrape_attendance(uid, password):
                                 "attendance": "Absent",
                             })
 
-        page.get_by_role("button", name="Summary").click()
-        page.wait_for_selector("table.fancyTable", timeout=10000)
+    
+        with page.expect_navigation(wait_until="networkidle", timeout=15000):
+            page.get_by_role("button", name="Summary").click()
+
+        page.wait_for_selector("table.fancyTable", timeout=15000)
         time.sleep(1)
 
         soup = BeautifulSoup(page.content(), "lxml")
@@ -121,30 +135,23 @@ def scrape_attendance(uid, password):
 
         if attendance_table:
             tbody = attendance_table.find("tbody")
-            if tbody:
-                rows = tbody.find_all("tr")
-                for row in rows:
-                    cols = [col.text.strip() for col in row.find_all("td")]
-                    if len(cols) < 10:
-                        continue
-                    summary.append({
-                        "no": cols[1],
-                        "code": cols[2],
-                        "name": cols[3],
-                        "classes": cols[7],
-                        "present": cols[8],
-                        "percentage": cols[9],
-                    })
+            rows = tbody.find_all("tr") if tbody else []
 
-        total_classes = 0
-        total_present = 0
-        for row in summary:
-            try:
-                total_classes += int(row["classes"])
-                total_present += int(row["present"])
-            except ValueError:
-                continue
+            for row in rows:
+                cols = [col.text.strip() for col in row.find_all("td")]
+                if len(cols) < 10:
+                    continue
+                summary.append({
+                    "no": cols[1],
+                    "code": cols[2],
+                    "name": cols[3],
+                    "classes": cols[7],
+                    "present": cols[8],
+                    "percentage": cols[9],
+                })
 
+        total_classes = sum(int(x["classes"]) for x in summary)
+        total_present = sum(int(x["present"]) for x in summary)
         total_avg = round((total_present / total_classes) * 100, 2) if total_classes else 0
 
         if total_avg >= 85:
@@ -161,12 +168,10 @@ def scrape_attendance(uid, password):
             need_to_attend75 = math.ceil(((0.75 * total_classes) - total_present) / 0.25)
             can_miss75 = 0
 
-
         browser.close()
 
-        
-
         return summary, absent_periods, total_avg, can_miss85, can_miss75, need_to_attend85, need_to_attend75
+
 
 if __name__ == "__main__":
     pass

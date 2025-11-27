@@ -11,22 +11,22 @@
   <main class="flex flex-col items-center justify-center flex-grow">
     <h2 class="mb-14 text-6xl font-mono text-[#c4a0f9] drop-shadow-[4px_4px_0px_black]">Enter Credentials</h2>
 
-    <div class="w-[32rem] rounded-lg bg-[#31263e] p-8 drop-shadow-[8px_8px_0px_black]">
+    <div class="w-[32rem] rounded-lg bg-[#2a272b] p-14 drop-shadow-[8px_8px_0px_black] hover:bg-[#302d31]">
       <form method="POST" action="/login" class="space-y-4">
         <div class="flex flex-col">
-          <label for="uid" class="font-mono text-[#eca72c] text-2xl">User ID:</label>
+          <label for="uid" class="text-yellow-400 text-xl">User ID:</label>
           <input type="text" id="uid" name="uid" required
             class="rounded border border-emerald-500 bg-slate-800 px-2 py-1 text-white text-xl" />
         </div>
 
         <div class="flex flex-col">
-          <label for="pass" class="font-mono text-[#eca72c] text-2xl">Password:</label>
+          <label for="pass" class="text-yellow-400 text-xl">Password:</label>
           <input type="password" id="pass" name="pass" required
             class="rounded border border-emerald-500 bg-slate-800 px-2 py-1 text-white text-xl" />
         </div>
 
         <button type="submit"
-          class="mt-2 w-full rounded bg-emerald-600 py-2 text-black hover:bg-emerald-800 hover:text-white hover:drop-shadow-[6px_6px_0px_black]">
+          class="mt-5 w-full rounded bg-emerald-600 py-2 text-black hover:bg-emerald-800 hover:text-white hover:drop-shadow-[6px_6px_0px_black]">
           Submit
         </button>
       </form>
